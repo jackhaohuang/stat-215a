@@ -47,7 +47,7 @@ github_name = "janesmith"
 
 ## Submitting your projects
 
-To submit your projects, you will need to create a subfolder in your local `stat-215a` folder called `lab1` (if you are submitting lab 1). The precise structure of the `lab1` folder is described in the `lab-instructions.pdf` file in the `stat-215-a-gsi` repo.
+To submit your projects, you will need to create a subfolder in your local `stat-215a` folder called `lab1` (if you are submitting lab 1). The precise structure of the `lab1` folder is described in the `discussion/week1/lab-instructions.pdf` file in the `stat-215-a-gsi` repo.
 
 Note that GitHub cannot host files more than 100 MB. If you try to push a file larger than this, GitHub will cry. This means you should avoid pushing the data to your GitHub.  
 
