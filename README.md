@@ -16,11 +16,11 @@ Once you have completed these first steps, you are then ready to create your pri
 
 1. Open your terminal and navigate to the directory where you keep your 215a work. For example, I would do `cd grad/215a` to enter my `215a` directory in my `grad` folder.
 
-1. Using the command-line, clone my stat-215a repository: `git clone https://github.com/NicolasSanchez95/stat-215a`. This will create a copy of the `stat-215a` repository on your own computer.
+1. Using the command-line, clone my stat-215a repository: `git clone https://github.com/anqiwang02/stat-215a.git`. This will create a copy of the `stat-215a` repository on your own computer.
 
 1. On the GitHub website, log in and create a **private** remote repository called `stat-215a`. That must be its exact name! **Do not** check the boxes to "Add a README file" or "Add .gitignore" or "Choose a license". After you hit "Create repository", you will be able to see it at https://github.com/YOURUSERNAME/stat-215a. Note that your repository will be empty.
 
-1. Add me (`NicolasSanchez95`) as a collaborator on your private repository so that I can access it (on https://github.com/YOURUSERNAME/stat-215a, navigate to Settings -> Collaborators -> Add people).
+1. Add me (`anqiwang02`) as a collaborator on your private repository so that I can access it (on https://github.com/YOURUSERNAME/stat-215a, navigate to Settings -> Collaborators -> Add people).
 
 1. Back in the terminal, set the origin of your local repository to be the remote repository that you just made. This tells git which remote repository to push your changes to when you `git push`. First, enter the repository directory with `cd stat-215a`, then point it to your private repo with `git remote set-url origin https://github.com/YOURUSERNAME/stat-215a.git`. Change YOURUSERNAME in the command to your GitHub username. (Advanced: if you have SSH keys set up for github, you can use the SSH URL instead of the HTTPS URL).
 
