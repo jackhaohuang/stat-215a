@@ -1,0 +1,4 @@
+{
+  "python.condaPath": "/usr/local/linux/miniforge-3.13/condabin/conda",
+  "python.defaultInterpreterPath": "/scratch/users/hao_huang/conda/envs/215a/bin/python"
+}
