@@ -1,0 +1,15 @@
+name: 215a
+channels:
+  - defaults
+dependencies:
+  - python = 3.11
+  - seaborn
+  - pip
+  - pip:
+    - numpy
+    - pandas
+    - matplotlib
+    - scikit-learn
+    - jupyterlab
+    - missingno
+    - openpyxl

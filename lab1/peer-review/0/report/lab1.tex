@@ -1,0 +1,312 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{float} 
+
+\usepackage{subcaption}  % add to your preamble
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+
+%make lists tighter
+\usepackage{enumitem}
+\setlist{nolistsep}
+\usepackage{hyperref}
+\usepackage{natbib} 
+\usepackage[square,numbers]{natbib}
+\usepackage{changepage}  % add to your preamble
+%reduce spacing before and after section
+\usepackage{titlesec}
+\titlespacing\section{0pt}{6pt}{0pt}
+\title{Lab 1 - PECARN TBI Data, STAT 215A, Fall 2026}
+
+% submission must not contain your name
+% but feel free to make a version for yourself with your name on it
+\author{}
+\date{September 19, 2026}
+\begin{document}
+\maketitle
+
+
+
+\section{Introduction}\label{introduction}
+
+Computed Tomography (CT) scans are a medically standard technique to assess Traumatic Brain Injuries (TBIs), which are the leading cause of death for patients younger than 18. However, the benefit of performing a CT scan must be weighed with its associated increased risk of cancer due to radiation exposure. To study this trade-off, Kuppermann et al.[1] examined over 42,000 patients younger than 18 years old within 24 hours of head trauma and Glasgow Coma Scale (GCS) scores less than 15. The study was conducted with patients across 25 different North American energy departments with the aim of developing prediction rules for if children with low risk of clinically-important traumatic brain injuries (CiTBI) should undergo a CT scan. 
+
+An accurate prediction model to help medical professionals assess the need for CT scans is crucial for patient care.  The development of the model requires a comprehensive dataset,  encompassing a wide range of patient dispositions.  In this analysis, I will examine the quality and completeness of the data collected by Kuppermann et al.[1]. I will do an initial exploration of the data, clean the data, and then assess the impact of cleaning the data. 
+
+Finally, using the cleaned dataset, I will implement two different classification methods to determine whether or not a CT scan should be recommended. I will assess the interpretability and stability of the two incorporated models.
+
+\section{Data}\label{data}
+Two datasets were provided from Kuppermann et al.[1].  An excel file containing the raw data was provided, which contains 43,399 rows and 125 columns. Each column is a separate variable, which are related to the patients' injury mechanism, history and symptoms, physical examinations, and other information. The symptoms tracked in the study include amnesia, loss of consciousness, seizure, headache, vomiting, dizziness, and parental observation of if the patient is acting normally. Physical examination findings of the study include GCS score, altered mental status, basilar skull fracture, palpable skull fracture, scalp hematoma, and neurological deficits. Additional information collected in the study includes trauma above the clavicles, other non-cranial trauma, indications for CT scan, and patient disposition. The raw data for each column is either a stand-alone integer (for example, age or patient identification number) or an integer representing a category.
+
+The second dataset provided was a comma-separated values (CSV) file. The first 9 rows of the CSV contain an overview of the dataset program. The remaining rows of the CSV contain a row for each of the 125 variables in the raw dataset. There are columns for the variable name, description, format name, and values. The CSV also contains miscellaneous notes from the study. 
+\subsection{Data Collection}\label{data-collection}
+The data was collected by trained site investigators and other emergency department physicians who recorded each patient's injury mechanism, history and symptoms, physical examinations, and other information. For patients younger than 2 years old, amnesia, headache, and dizziness were not recorded.  Further details of the data collection procedures are provided in Kuppermann et al.[1].
+
+
+\subsection{Data Cleaning}\label{data-cleaning}
+I first observed the amount of data missing data for all 125 variables. Of those 125 variables, 58 of the variables contained at least one missing data point. Figure \ref{fig:1} shows a summary of the 15 variables with the highest amounts of missing values in the raw data. 
+
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \centering % Centers the image on the page
+    \includegraphics[width=0.7\textwidth]{lab1//figs/missing_vals_raw.png} 
+    \caption{A horizontal bar graph showing the quantity of all missing values in the raw dataset.}
+    \label{fig:1} % Used for referencing in text
+\end{figure}
+
+Figure \ref{fig:2} shows a heatmap with correlations between missing variables. From the heatmap, its clear that variables associated with GCS (GCS Verbal, GCSEye, and GCSMotor) are often missing together. Other variables have correlations between -0.1 and 0.2, so they do not have much correlation.
+
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \centering % Centers the image on the page
+    \includegraphics[width=1\textwidth]{lab1//figs/missing_vals_headmap.png} 
+    \caption{A heatmap showing correlations between missing variables. Note that a correlation closer to 1 indicates a stronger tendency for two variables be missing in the same row. }
+    \label{fig:2} % Used for referencing in text
+\end{figure}
+
+The variables with the largest amounts of missing data are dizziness, ethnicity, race, and whether or not the patient was observed after initial evaluation (observed). These variables and several others documented in the dataset are not considered for the prediction rule in Kuppermann et al[1], so I gave most data cleaning focus on the variables considered in the prediction rule. Summaries of the variables considered in the prediction model from Kuppermann et al.[1] are provided in Table 1.
+
+% \usepackage{hhline}
+\begin{table}[H]
+\centering
+\caption{A summary of predictor variables identified in Kuppermann et al.[1]}
+\renewcommand{\arraystretch}{1.1} 
+\begin{tabular}{|l |p{10cm}|}
+\hline
+\textbf{Variable Name}    & \textbf{Description}                                                                                                        \\ 
+\hline
+High\_impact\_InjSev& Severity of injury mechanism                                                                                                \\\hline
+ActNorm              & Does the parent think the child is acting normally / like themself?                                                         \\\hline
+Vomit                & Vomiting (at any time after injury)?                                                                                        \\\hline
+HASeverity           & Severity of headache                                                                                                        \\\hline
+SFxPalp              & Palpable skull fracture?                                                                                                    \\\hline
+LOCSeparate          & History of loss of consciousness?                                                                                           \\\hline
+Hema                 & Raised scalp hematoma(s) or swelling(s)?                                                                                    \\\hline
+AMS                  & GCS $<$15 or other signs of altered mental status (agitated, sleepy, slow to respond, repetitive questions in the ED, other)  \\\hline
+SFxBas               & Signs of basilar skull fracture?                                                                                            \\
+\hline
+\end{tabular}
+\end{table}
+
+For the data cleaning, I mainly focused on imputing these nine variables based on the domain knowledge and implications from observations from related variables. 
+
+The following assumptions were made using observations from related variables:
+\begin{itemize}
+\item If the injury mechanism indicated that the patient was a pedestrian struck by a car, the patient was assigned a high impact injury severity. 
+\item For children age 2 or younger, the child was assumed as not acting normally if an altered mental state (AMS) was observed.
+\item If the observations related to vomiting were marked as not applicable, I assumed no vomiting occurred.
+\item If headache severity was marked as not applicable, I assumed no headache was observed. Similarly, if no headache was observed, I assumed the severity was not applicable. 
+\item If observations of basilar or palpable skull fracture were marked as not applicable, I assume no skull fracture was observed. Similarly, if observations related to the skull fracture are noted, I assumed there was a skull fracture.
+\item If there was no history of Loss of Consciousness (LOC), I assumed the LOC duration was 0. If a duration of LOC was observed, I assumed there was a history of LOC. If LOC duration was not applicable, I assumed there was no history of LOC.
+\item If hematoma location and size was marked as not applicable, I assumed no hematoma was observed.
+\item Since a GCS = 15 implies a patient is a person is fully awake, alert, and oriented with normal brain and neurological function, I assumed no AMS for patients with GCS = 15. If any observations related to AMS were recorded, I assumed the patient had an AMS.
+\end{itemize}
+
+A comparison of the raw data with cleaned, imputed data is provided in Figure \ref{fig:3}. In general, most of the missing data from the variable predictors has been imputed. However, missing data still remains for injury severity, acting normally, vomiting, and headache severity. 
+
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \centering % Centers the image on the page
+    \includegraphics[width=1\textwidth]{lab1//figs/imputed_data_comparison.png} 
+    \caption{A comparison of the raw data with data imputed based on assumptions from the domain knowledge.}
+    \label{fig:3} % Used for referencing in text
+\end{figure}
+
+For the remainder of the missing data, I imputed data in three different ways to check for data perturbations. For one perturbation, I removed all remaining null values from the dataset. For the next perturbation, I replaced the null values with the median observed value. For the last perturbation, I replaced the null values with a randomly sampled value from the observed dataset. 
+
+
+\subsection{Data Exploration}\label{data-exploration}
+I performed exploratory data analysis using the dataset imputed with domain knowledge and remaining missing values sampled from the observed values.
+Since Kuppermann et al.[1] grouped patients by age younger or older than two, I first examined the spread in predictor variables based on age by examining box and whiskers plots for each variable. In general, the median values for each variable is between 3 and 7 years old. However, patients with a history of LOC tend to be older, with median values closer to 12 years old. Additionally, patients with an observed headache severity are also older. It is noted that headaches were only reported for verbal patients, so patients who are more likely to be pre-verbal fall in the 'Not applicable' category. Sample box and whiskers plots for three of the nine predictor variables plotted with age is presented in Figure \ref{fig:4}. 
+
+
+
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \centering % Centers the image on the page
+    \includegraphics[width=1\textwidth]{lab1//figs/box_whiskers_age.png} 
+    \caption{Box and whiskers plots for the predictor variables.}
+    \label{fig:4} % Used for referencing in text
+\end{figure}
+
+To better understand the factors that medical professionals consider when recommending a CT scan, I evaluated the most common reasons CT scans were ordered in the study. In the form, the clinician had to indicate one or more important indications influencing the decision to obtain a head CT. The eight most common are shown in Figure \ref{fig:5}. The most common reason for ordering a CT scan was injury mechanism, followed by LOC, young age, vomiting, headache, and scalp hematoma. 
+
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \centering % Centers the image on the page
+    \includegraphics[width=0.8\textwidth]{lab1//figs/ct_reason_for_order.png} 
+    \caption{Most common reasons patients underwent a CT scan.}
+    \label{fig:5} % Used for referencing in text
+\end{figure}
+
+I also examined the outcomes of patients who underwent a CT scan. Of the 15,899 patients who underwent a CT scan, 89.5\% of those patients had no traumatic finding documented. The top 8 most frequent types of ciTBIs found for patients who underwent a CT scan are plotted in Figure \ref{fig:6}.
+
+As shown in Figure \ref{fig:6}, skull fracture is the most common finding found from the CT scan and largely exceeds the frequency of the other findings. According to Kuppermann et al.[1], signs of palpable or basilar skull fractures are two of the predictor variables used in the prediction model, so it's no surprise that skull fracture is the most common finding of the CT scan. 
+
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \centering % Centers the image on the page
+    \includegraphics[width=.8\textwidth]{lab1//figs/ct_findings.png} 
+    \caption{Most common findings for patients who underwent a CT scan.}
+    \label{fig:6} % Used for referencing in text
+\end{figure}
+
+In addition to the predictor variables identified in Table 1, I examined the effect of trauma above the clavicles, amnesia, clinical evidence of 'other' injuries, and post-traumatic seizures. To do so, I calculated the percentages of patients who had ciTBIs given observations of 'Yes' for those variables. A summary of those results are presented in Table 2. 17.15(\%) of patients with neurological deficits and  10.08(\%) of patients with post-traumatic seizures had ciTBIs. Additionally, some of the predictor variables used in Kuppermann et al.[1], such as vomiting and severe headache, had lower percentages of patients with ciTBIs.
+\begin{table}[H]
+    \centering
+    \centering    \caption{Summary of observations of ciTBI given presence of a predictor variable.}
+    \renewcommand{\arraystretch}{1.1} 
+    \begin{tabular}{|c|c|}\hline
+         Observation& Patients with ciTBI given Observation (\%)\\\hline
+         Palpable skull fracture& 37.5\\\hline
+         Signs of basilar skull
+fracture& 31.82\\\hline
+         Neurological deficit& 17.14\\\hline
+         Post-traumatic seizure& 10.08\\\hline
+         AMS& 9.45\\\hline
+         History of LOC & 7.14\\\hline
+         Child is not acting normally& 5.87\\\hline
+         Other substantial injuries& 5.64\\\hline
+         Severe injury mechanism& 5.08\\\hline
+ Vomiting&3.74\\\hline
+ Severe headache&3.46\\\hline
+ Amnesia&3.02\\\hline
+ Raised scalp hematoma or swelling&2.61\\\hline
+ Trauma above the clavicles&2.11\\ \hline
+    \end{tabular}
+
+    \label{tab:placeholder}
+\end{table}
+\section{Findings}\label{findings}
+
+In this section I will present my findings related to observations of the predictor variables and how influence the decision to order a CT scan. I will also present my findings related to the predictor variables and how often they are associated with patients that have ciTBIs. 
+
+\subsection{First finding}\label{first-finding}
+Figure 7 shows two plots. The left plot shows the most common reasons CT scans are ordered compared to how often those tests result in a ciTBI finding. My motivation for examining this relationship was to see if any of the reasoning behind why clinicians order CT scans are less useful for predicting ciTBIs than others. The right plot then shows the age distributions for the reasons CT scans are ordered.
+
+As shown in the left plot, the the strongest reasoning for ordering a CT scan are evidence of skull fracture or observation of skull fracture on an X-ray. Skull fracture was also the most common reason for ordering a CT scan, and has the highest association with the patient having a ciTBI. Interestingly, the age distribution for skull fractures is skewed younger for having the skull fracture on an X-ray and older for finding clinical evidence of a skull fracture. On the lower end of reasoning for ordering a CT scan is the injury mechanism.  The age range for this reasoning is broad, with the median age around 8 years old. 
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \centering % Centers the image on the page
+    \includegraphics[width=1\textwidth]{lab1//figs/ct_findings_by_age.png} 
+    \caption{A comparison between reasons why CT scans were ordered, positive CT findings, and the age distributions of reasons why CT scans were ordered.}
+    \label{fig:7} % Used for referencing in text
+\end{figure}
+
+\subsection{Second finding}\label{second-finding}
+
+Figure 8 shows a heatmap for the presence of predictor variables compared to the percent of patients who had ciTBIs. The heatmap is binned by age group. In contrast to my earlier finding in Table 2 where I examined if patients had a ciTBI given the presence of a predictor variable, in Figure 8 I am examining what were the most prevalent predictor variables given the presence of a ciTBI. In this case, having a GCS < 15 or other sign of AMS was the most common variable for patients who had ciTBIs. Following that was trauma above the clavicles, child not acting normally, hematoma, and history of LOC.  Towards the bottom of the list were severe injury and severe headache. Note that severe headaches were not recorded for children below the age of 2. Interestingly, amnesia seemed to become more prevalent with increasing age, with 1.3(\%) of patients for age below 2 and 32.7(\%) for ages 10 and up.
+
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \includegraphics[width=0.8\textwidth]{lab1//figs/variable_tbi_heatmap.png} 
+    \caption{A heatmap showing the major predictor variables for ciTBI compared to the percent of patients who had ciTBIs given the presence of those predictor variables.}
+    \label{fig:8} % Used for referencing in text
+\end{figure}
+
+\subsection{Reality Check}\label{reality-check}
+As a reality check, it makes sense that skull fracture would be the most common reason for ordering a CT scan but would not be present in the majority of patients with ciTBIs, because skull fractures are one type of TBI. It also makes sense that the majority of patients who had ciTBIs had a GCS < 15 or other sign of AMS, since a GMS of 15 represents normal consciousness.  This reality check is useful because these variable predictors were also used in the prediction rule in Kuppermann et al[1], so they should have strong associations with ciTBIs. 
+
+It is also useful to see that when young age was used as a justification to order the CT scan, it was generally for patients aged 0 to 2.5. There are a few outliers for children above the age of 5 when this reasoning was used. 
+
+Another reality check is that the injury mechanism covered a broad range of ages. Injury mechanisms in the study are defined broadly and include car crashes, bike accidents, falls, hitting stationary objects, and other mechanisms. Since there is a wide range of injury mechanisms included in the study, it makes sense that the age range would be very broad as well when injury mechanism was used as the justification for ordering a CT scan.
+
+One issue I see with the heatmap is that severe injury seems low for percentage of patients with ciTBI. The percentage of patients with severe injuries varies from 0 to 8.5(\%). By definition, a ciTBI has at least one of the following: neurosurgical procedure performed, intubated for more than 24 hours for head trauma, death due to TBI or in the ED, and/or hospitalized for at least 2 nights due to head injury and having a TBI on CT. Based on the definition of ciTBI, I would expect a majority of patients with ciTBIs to have severe injuries. 
+
+A likely reason for this discrepancy is the data cleaning process. After imputing data based on the assumptions listed in Section 2.2, I sampled the rest of the missing values from the observed values. A more logical approach may have been to assume all patients with ciTBIs had severe injuries. 
+
+
+\subsection{Stability Check}\label{stability-check}
+
+As discussed in section 2, I cleaned the data first by imputing missing values based on assumptions and domain knowledge. With the remaining missing data, I created three separate datasets: One had missing data imputed by sampling from observed values, one had missing data imputed by replacing with the median of observed values, and one had all remaining missing data removed. I presented my findings in section 3 based on the data imputed by replacing missing data with samples from the observed values. I checked the stability of my second finding against the the dataset with missing values replaced by the median of observed values. A before and after view of this check is presented in Figure \ref{fig:9}.
+
+In general, the relative magnitude of predictor variables with their respective percentages of ciTBIs did not vary much between the two datasets. In Figure \ref{fig:9b}, the variable for 'Child not acting normally' moved from third on the list to the top of the list, and the variable for AMS moved from first on the list to second on the list. The variable from 'Trauma above clavicles' moved from second on the list to third. The order of the rest of the variables stayed the same, so the finding appears generally stable.
+
+\begin{adjustwidth}{-1in}{-1in}  % expands 1 inch into left and right margins
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lab1/figs/heatmap_base.png}
+        \caption{Null values replaced with values sampled from \newline observations (before)}
+        \label{fig:9a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lab1/figs/heatmap_perturbation_med.png}
+        \caption{Null values replaced with median values of each \newline (after)}
+        \label{fig:9b}
+    \end{subfigure}
+    \caption{A comparison of the association of each variable with the percentage of patients with ciTBI with two different data perturbations.}
+    \label{fig:9}
+\end{figure}
+\end{adjustwidth}
+\section{Modeling}
+
+I applied two different prediction models to my cleaned dataset to assess if patients should be recommended for CT scans. The first model I applied was the Pediatric Emergency Care Applied Research Network (PECARN) algorithm presented in [1] and shown on Figure \ref{fig:10}). The second modeling method I applied is the Children's Head Injury Algorithm (CHALICE) method detailed in Dunning et al (2006) [2]. 
+
+\begin{figure}[H] % [htbp] specifies placement: here, top, bottom, page
+    \centering % Centers the image on the page
+    \includegraphics[width=0.7\textwidth]{lab1//figs/PECARN model.png} 
+    \caption{PECARN model schematic sourced from Kuppermann et al. [1].}
+    \label{fig:10} % Used for referencing in text
+\end{figure}
+
+
+\subsection{Implementation}
+The PECARN algorithm splits the patients into age groups younger and older than age two. All patients are recommended to have a CT scan if they have a GCS = 14 or other sign of AMS. Patients younger than two that don't have a GCS = 14 or other sign of AMS may still be recommended a CT scan if they have a hematoma, LOC greater than 5 seconds, severe injury, or are otherwise not acting normally. For patients older than two, patients that don't have a GCS = 14 or other sign of AMS may stil be recommended a CT scan if they have a history of LOC, history of vomiting, severe injury mechanism, or severe headache.
+
+Unlike the PECARN model, the CHALICE model does not split patients among age groups but has a stricter criteria for recommending a CT scan. For example, while the PECARN model may recommend a CT scan for patients with a history of LOC or vomiting, the CHALICE model recommends CT scans only for patients with LOC longer than 5 minutes or at least 2 vomiting episodes. Note the CHALICE model bases injury severity based on high speed injury. Because our dataset does not include speed for the injuries such as car and bike accidents, I assumed that all of the 'severe' injuries in our dataset would be considered a high speed injury under the CHALICE model. 
+
+
+\subsection{Stability}
+After incorporating both algorithms, I checked the models against the data perturbation for cleaned data with null values replaced by medians. The results of both algorithms with the data perturbation are presented in Figure \ref{fig:11}. In general, there is very minimal difference when a data perturbation is applied. The only difference is that the CHALICE model yields  0.4\% more CT scans resulting in no presence of a ciTBI when the data perturbation is used.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lab1/figs/chalice_vs_pecarn.png}
+        \caption{Null values replaced with values sampled from \newline observations}
+        \label{fig:11a}
+    \end{subfigure}%
+    \hspace{0.01\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{lab1/figs/chalice_vs_pecarn_perturbation.png}
+        \caption{Null values replaced with median values of each \newline variable}
+        \label{fig:11b}
+    \end{subfigure}
+    \caption{A comparison of the PECARN and CHALICE models for assessing patients for ciTBIs.}
+    \label{fig:11}
+\end{figure}
+
+
+
+\subsection{Discussion}
+The PECARN and CHALICE models were selected based on their applicability to the dataset and their relatively simple implementation. Both models are based on the presence of specific variables which are generally answered in a 'yes/no' format. This is an ideal format for clinicians to use because it leaves less room for ambiguity, allowing for quicker decision-making. Additionally, both models performed relatively well for accurately assessing if patients who were recommended to have a CT scan would actually have a ciTBI. 
+
+It is noted that the PECARN model appears more selective than the CHALICE model. However, this  may be due to the simplifications I made during implementation and not the nature of the model itself. Ideally, this comparison would be performed using data more specific to the CHALICE model in addition to the data specific to the PECARN model. 
+
+\section{Conclusion}\label{conclusion}
+In the beginning of the report we started with the domain problem, which is the first step of the Data Science Life Cycle (DSLC). In the first part of the DSLC, we are working with the domain problem and data cleaning process, which are within the realms of data and reality. The domain problem in this context is about helping medical professionals assess the need for CT scans, without unnecessarily increasing the patients' cancer risk due to radiation exposure. The domain question here is our real-world problem. In the next stage of the DSLC, we obtain the data and perform exploratory data analysis. It is unlikely that there is a one-to-one correspondence of the data and reality. The data we collect is an approximation of reality, and cleaning the data requires several assumptions and simplifications. The data cleaning process can affect the stability aspect of the PCS framework, which is examined in the initial findings and after the models are applied.
+
+In the next stage of the lab, I implemented two models to solve the domain problem. This is part of the second realm, algorithms and models. This part of the DSLC is connected to the Computability aspect of the PCS framework. The two models used in this stage were selected based on the 'yes/no' format of the variables and direct interpretability of results. This 
+
+The third realm, future data and reality, is explored in the application of the two models. After applying the CHALICE and PECARN models, the predictive accuracy of the models is compared to the data collected for ciTBIs. There was very minimal difference when a perturbed dataset was used, indicating that the models are stable. Additionally, both models performed well for assessing if patients that were recommended CT scans had ciTBIs. Under the PCS framework, the analysis results indicate that the two models are Predictable, Computable, and Stable considering the data perturbation used in this study..
+
+\section{Academic honesty statement}\label{academic-honesty-statement}
+
+Professor Bin Yu: I pledge that the work submitted in this report is my own and that all sources I used are properly cited, including my classmates. I have documented the methods and assumptions used in this report and have confirmed that the results are reproducible. 
+
+As members of the scientific community,  we are obligated to uphold the value of honesty in academic research because science relies on truth and knowledge to progress. If scientists are dishonest, there are dangerous consequences that can occur.
+
+\section{Collaborators}\label{collaborators}
+Not applicable.
+\section{Bibliography}\label{bibliography}
+\begin{thebibliography}{99}
+\bibitem{kuppermann2009pecarn}
+Kuppermann, N., Holmes, J. F., Dayan, P. S., et al. (2009). Identification of children at very low risk of clinically-important brain injuries after head trauma: A prospective cohort study. \textit{The Lancet, 374}(9696), 1160--1170. \href{https://doi.org/10.1016/S0140-6736(09)61558-0}{https://doi.org/10.1016/S0140-6736(09)61558-0}
+
+\bibitem{dunning2006chalice}
+Dunning, J., Daly, J. P., Lomas, J.-P., Lecky, F., Batchelor, J., \& Mackway-Jones, K. (2006). Derivation of the children's head injury algorithm for the prediction of important clinical events decision rule for head injury in children. \textit{Archives of Disease in Childhood, 91}(11), 885--891. \href{https://doi.org/10.1136/adc.2005.083980}{https://doi.org/10.1136/adc.2005.083980}
+
+\end{thebibliography}
+
+
+\end{document}

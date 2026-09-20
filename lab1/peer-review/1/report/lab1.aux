@@ -1,0 +1,62 @@
+\relax 
+\citation{kuppermann2009}
+\citation{miglioretti2013}
+\citation{pearce2012}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{}\protected@file@percent }
+\newlabel{introduction}{{1}{1}{Introduction}{section.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Data}{1}{}\protected@file@percent }
+\newlabel{data}{{2}{1}{Data}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Data Collection}{1}{}\protected@file@percent }
+\newlabel{data-collection}{{2.1}{1}{Data Collection}{subsection.2.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Data Cleaning}{2}{}\protected@file@percent }
+\newlabel{data-cleaning}{{2.2}{2}{Data Cleaning}{subsection.2.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Data Exploration}{2}{}\protected@file@percent }
+\newlabel{data-exploration}{{2.3}{2}{Data Exploration}{subsection.2.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Age and preverbal structure on the training set ($n=34{,}703$).}}{2}{}\protected@file@percent }
+\newlabel{tab:age-preverbal}{{1}{2}{Data Exploration}{table.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Findings}{2}{}\protected@file@percent }
+\newlabel{findings}{{3}{2}{Findings}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}First finding: only 4.6\% of CT-scanned patients actually had a ciTBI.}{2}{}\protected@file@percent }
+\newlabel{first-finding}{{3.1}{2}{First finding: only 4.6\% of CT-scanned patients actually had a ciTBI.}{subsection.3.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Prevalence of selected clinical findings among children with vs without ciTBI on the training labelled set. The top row shows CT use; the title notes that only 4.6\% of children who received a CT had ciTBI.}}{3}{}\protected@file@percent }
+\newlabel{fig:citbi-traits}{{1}{3}{First finding: only 4.6\% of CT-scanned patients actually had a ciTBI.}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Second finding: the data is mostly populated with relevant clinical data, with low `true' missing data.}{3}{}\protected@file@percent }
+\newlabel{second-finding}{{3.2}{3}{Second finding: the data is mostly populated with relevant clinical data, with low `true' missing data.}{subsection.3.2}{}}
+\citation{kuppermann2009}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Availability of informative predictors after diagnostics, by verbal status, age band, and CT (top: blank/91/92; bottom: true blanks only).}}{4}{}\protected@file@percent }
+\newlabel{fig:availability}{{2}{4}{Second finding: the data is mostly populated with relevant clinical data, with low `true' missing data.}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Reality Check}{4}{}\protected@file@percent }
+\newlabel{reality-check}{{3.3}{4}{Reality Check}{subsection.3.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Stability Check}{4}{}\protected@file@percent }
+\newlabel{stability-check}{{3.4}{4}{Stability Check}{subsection.3.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Stability check for Finding~1. Panel A is the baseline trait comparison on the training labelled set. Panels B--D show the same prevalence gap (\% in ciTBI minus \% in no ciTBI) within alternate cohorts: CT vs no-CT; preverbal vs verbal; and intubated/sedated vs neither. Semi-transparent bars are $\pm 1$ SE of the difference of proportions.}}{5}{}\protected@file@percent }
+\newlabel{fig:finding1-stability}{{3}{5}{Stability Check}{figure.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Modeling}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Implementation}{5}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Hyperparameters for the logistic and HistGradientBoosting models (sklearn). Shared settings appear in both columns; NA means the setting does not apply.}}{6}{}\protected@file@percent }
+\newlabel{tab:hyperparameters}{{2}{6}{Implementation}{table.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Train-holdout confusion matrices for pooled vs preverbal/verbal logistic and HGB (default threshold $0.5$).}}{6}{}\protected@file@percent }
+\newlabel{fig:logistic-vs-hgb}{{4}{6}{Implementation}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Stability}{6}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces One perturbation we did is to try a RidgeClassifier in place of logistic L2, both fit separately on preverbal and verbal cohorts. As you can see, the resulting confusion matrix is very similar to the one from the simple Logistic L2 (same holdout FNR $=0.205$ and recall $=0.795$; prediction agreement $0.967$). For a data perturbation, I also did a 5-fold cross validation of the same preverbal/verbal logistic. As you can see, the mean False Negative Rate (FNR) is $0.185$ over the folds, while the mean recall is $0.815$, with relatively low variation (sd $\approx 0.012$). Compare this to the original L2 on the fixed holdout, which has FNR $=0.205$ and a recall of $0.795$.}}{7}{}\protected@file@percent }
+\newlabel{fig:pcs-perturbation}{{5}{7}{Stability}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Discussion}{7}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Interpretation schematic for the balanced L2 logistic model. Panel A: clinical predictors are scored through a linear log-odds, using a sigmoid to calculate the probability of ciTBI from the input data. Panel B: selected coefficients and how they influence the odds of ciTBI. For instance, AMS and skull-fracture signs push risk up; acting normally pushes it down a little relative to baseline.}}{8}{}\protected@file@percent }
+\newlabel{fig:logistic-interp}{{6}{8}{Discussion}{figure.6}{}}
+\citation{pearce2012}
+\citation{miglioretti2013}
+\citation{kuppermann2009}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Final frozen-test performance (threshold $0.5$). TP/FP/FN/TN are counts; FNR and FPR are rates.}}{9}{}\protected@file@percent }
+\newlabel{tab:final-test}{{3}{9}{Discussion}{table.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{9}{}\protected@file@percent }
+\newlabel{conclusion}{{5}{9}{Conclusion}{section.5}{}}
+\bibcite{kuppermann2009}{1}
+\bibcite{miglioretti2013}{2}
+\bibcite{pearce2012}{3}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Academic honesty statement}{10}{}\protected@file@percent }
+\newlabel{academic-honesty-statement}{{6}{10}{Academic honesty statement}{section.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Collaborators}{10}{}\protected@file@percent }
+\newlabel{collaborators}{{7}{10}{Collaborators}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Bibliography}{10}{}\protected@file@percent }
+\newlabel{bibliography}{{8}{10}{Bibliography}{section.8}{}}
+\gdef \@abspage@last{10}
