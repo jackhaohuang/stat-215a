@@ -212,3 +212,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Ignore all data directories
+data/
