@@ -1,0 +1,17 @@
+name: 215a
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python
+  - quarto
+  - pip:
+    - numpy
+    - pandas
+    - geopandas
+    - matplotlib
+    - seaborn
+    - scipy
+    - scikit-learn
+    - jupyterlab
+    - pyreadr
