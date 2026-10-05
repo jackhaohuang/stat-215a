@@ -1,0 +1,20 @@
+# Environment used to produce every figure and number in the report
+# Recreate with:  conda env create -f code/environment.yaml
+name: 215a
+channels:
+  - defaults
+dependencies:
+  - python=3.14
+  - pip
+  - pip:
+      - numpy==2.5.3
+      - pandas==3.0.5
+      - geopandas==1.2.0
+      - pyogrio==0.13.0
+      - shapely==2.1.2
+      - matplotlib==3.11.2
+      - seaborn==0.13.2
+      - scikit-learn==1.9.1
+      - scipy==1.18.1
+      - pyreadr==0.5.7
+      - jupyterlab

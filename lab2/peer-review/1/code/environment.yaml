@@ -1,0 +1,21 @@
+name: 215a
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - jupyter
+  - notebook
+  - ipykernel
+  - numpy
+  - pandas
+  - geopandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - pyreadr
+  - plotly
+  - janitor
+  - python-kaleido
+  - statsmodels
+  - python-kaleidoconda 
