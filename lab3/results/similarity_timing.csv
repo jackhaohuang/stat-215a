@@ -1,0 +1,17 @@
+m,q,implementation,seconds
+0.2,1806,numba contingency jaccard,2.9115495271980764e-05
+0.2,1806,numpy contingency jaccard,8.26655887067318e-05
+0.2,1806,regular jaccard,1.112248639576137
+0.3,4064,numba contingency jaccard,3.672556485980749e-05
+0.3,4064,numpy contingency jaccard,9.533748961985112e-05
+0.3,4064,regular jaccard,6.0528856930322945
+0.4,7224,numba contingency jaccard,5.5929855443537234e-05
+0.4,7224,numpy contingency jaccard,0.00011582330334931612
+0.5,11288,numba contingency jaccard,9.247264824807644e-05
+0.5,11288,numpy contingency jaccard,0.00015020559076219797
+0.6,16255,numba contingency jaccard,0.00011472168844193221
+0.6,16255,numpy contingency jaccard,0.00019550835713744164
+0.7,22124,numba contingency jaccard,0.0001534553011879325
+0.7,22124,numpy contingency jaccard,0.0002255538012832403
+0.8,28897,numba contingency jaccard,0.0001890677958726883
+0.8,28897,numpy contingency jaccard,0.0002726258710026741
